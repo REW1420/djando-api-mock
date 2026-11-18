@@ -1,0 +1,25 @@
+# Base de datos PostgreSQL para desarrollo.
+#   Levantar:  docker compose up -d
+#   Detener:   docker compose down        (los datos se conservan en el volumen)
+#   Borrar todo, incluidos los datos:  docker compose down -v
+services:
+  db:
+    image: postgres:17
+    container_name: python_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:
